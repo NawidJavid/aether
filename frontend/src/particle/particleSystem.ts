@@ -78,6 +78,7 @@ export class ParticleSystem {
 
     this.morphStartTime = performance.now();
     this.morphDuration = durationMs;
+    this.material.uniforms.u_morphProgress.value = 0.0;
     this.isMorphing = true;
   }
 

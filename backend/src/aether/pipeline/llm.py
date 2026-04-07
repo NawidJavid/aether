@@ -21,20 +21,20 @@ _ELEMENT_RE = re.compile(
 async def generate_script(topic: str) -> ParsedScript:
     prompt = _PROMPT_TEMPLATE.replace("{topic}", topic)
 
-    async with _client.messages.stream(
+    message = await _client.messages.create(
         model="claude-opus-4-6",
         max_tokens=4096,
-        thinking={"type": "adaptive"},
         messages=[{"role": "user", "content": prompt}],
-    ) as stream:
-        message = await stream.get_final_message()
+    )
 
-    # Adaptive thinking may produce thinking blocks before the text block
     raw = ""
     for block in message.content:
         if block.type == "text":
             raw = block.text.strip()
             break
+
+    if not raw:
+        raise ValueError(f"LLM returned no text. Block types: {[b.type for b in message.content]}")
 
     return _parse_script(raw)
 
