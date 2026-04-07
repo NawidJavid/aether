@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from aether.api import generate, jobs
 from aether.config import settings
+from aether.db import init_db
 
 
 @asynccontextmanager
@@ -15,6 +16,7 @@ async def lifespan(app: FastAPI):
     data = Path(settings.data_dir)
     for sub in ["cache/shapes", "cache/meshes", "cache/images", "manifests"]:
         (data / sub).mkdir(parents=True, exist_ok=True)
+    await init_db()
     yield
 
 
