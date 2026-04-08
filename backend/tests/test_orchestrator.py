@@ -34,13 +34,20 @@ def _make_script() -> ParsedScript:
 
 
 def _make_tts_result(text: str, output_dir: Path) -> TTSResult:
+    """Simulate ElevenLabs Forced Alignment tokenization: punctuation becomes separate tokens."""
+    import re
+
     audio_path = output_dir / "audio.mp3"
     audio_path.write_bytes(b"\xff\xfb\x90\x00" * 10)  # minimal bytes
-    words = text.split()
+    # Split words and separate trailing/leading punctuation (mimics ElevenLabs)
+    tokens: list[str] = []
+    for word in text.split():
+        parts = re.findall(r"[A-Za-z0-9']+|[^\s\w]", word)
+        tokens.extend(parts)
     return TTSResult(
         audio_path=audio_path,
-        duration_ms=len(words) * 250,
-        word_starts_ms=[(w, i * 250) for i, w in enumerate(words)],
+        duration_ms=len(tokens) * 200,
+        word_starts_ms=[(t, i * 200) for i, t in enumerate(tokens)],
     )
 
 

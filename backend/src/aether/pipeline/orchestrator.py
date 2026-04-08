@@ -110,7 +110,15 @@ def _schedule_shapes(
         elif element.kind == "say":
             assert element.text is not None
             pending_say.append(element.text)
-            word_index += len(element.text.split())
+            # Advance word_index by matching alphanumeric characters, not word count.
+            # ElevenLabs Forced Alignment tokenizes differently from Python split()
+            # (punctuation/contractions become separate tokens), so counting words
+            # would under-advance and make all shape triggers fire too early.
+            target_chars = sum(c.isalnum() for c in element.text)
+            consumed_chars = 0
+            while consumed_chars < target_chars and word_index < len(word_starts):
+                consumed_chars += sum(c.isalnum() for c in word_starts[word_index][0])
+                word_index += 1
 
     # Attach remaining say text to the last shape
     if scheduled and pending_say:

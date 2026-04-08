@@ -209,8 +209,8 @@ export class PlaybackScheduler {
         const cloud = this.pointClouds.get(shape.point_cloud_url);
         if (cloud) {
           this.particleSystem.morphTo(cloud, shape.morph_duration_ms);
+          this.firedIndices.add(i); // Inside cloud check so it retries if cloud not loaded yet
         }
-        this.firedIndices.add(i);
       }
     }
   }
