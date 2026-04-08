@@ -162,9 +162,15 @@ def _parse_script(raw: str) -> ParsedScript:
 
 ## TTS pipeline (`pipeline/tts.py`)
 
-ElevenLabs streaming-with-timestamps endpoint gives character-level timing. We bucket characters into words for the scheduler.
+ElevenLabs has two endpoints we use together:
 
-```python
+1. **Text to Speech** (`/v1/text-to-speech/{voice_id}`) — generates the MP3 audio
+2. **Forced Alignment** (`/v1/forced-alignment`) — takes the finished audio + original text, returns precise word-level and character-level timestamps
+
+We use both because Forced Alignment gives noticeably more accurate word timings than the inline timestamps the TTS-with-timestamps endpoint returns. Since the entire architectural premise of Aether is "pre-render so we can achieve word-perfect sync," we use the dedicated alignment tool. The two calls run sequentially inside `render_audio()` (alignment depends on the audio existing), but the whole sequence runs in parallel with shape generation in the orchestrator, so it doesn't slow the overall pipeline.
+
+Required ElevenLabs permissions for your API key: Text to Speech (Access), Forced Alignment (Access), Voices (Read).
+
 import base64
 from dataclasses import dataclass
 from pathlib import Path
@@ -182,11 +188,34 @@ class TTSResult:
 
 
 async def render_audio(text: str, output_dir: Path) -> TTSResult:
-    """Calls ElevenLabs with-timestamps endpoint, writes audio.mp3, returns word timing."""
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{settings.elevenlabs_voice_id}/with-timestamps"
+    """
+    Two-step pipeline:
+      1. Generate audio with the regular TTS endpoint
+      2. Run Forced Alignment over the finished audio + original text
+         to get precise word-level timestamps
+    """
+    audio_path = output_dir / "audio.mp3"
+    audio_bytes = await _synthesize(text)
+    audio_path.write_bytes(audio_bytes)
+
+    alignment = await _force_align(audio_bytes, text)
+    word_starts_ms = _extract_word_starts(alignment)
+    duration_ms = _extract_duration_ms(alignment)
+
+    return TTSResult(
+        audio_path=audio_path,
+        duration_ms=duration_ms,
+        word_starts_ms=word_starts_ms,
+    )
+
+
+async def _synthesize(text: str) -> bytes:
+    """Step 1: Generate the audio. We discard ElevenLabs' inline timestamps."""
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{settings.elevenlabs_voice_id}"
     headers = {
         "xi-api-key": settings.elevenlabs_api_key,
         "Content-Type": "application/json",
+        "Accept": "audio/mpeg",
     }
     payload = {
         "text": text,
@@ -202,42 +231,43 @@ async def render_audio(text: str, output_dir: Path) -> TTSResult:
     async with httpx.AsyncClient(timeout=120.0) as client:
         response = await client.post(url, json=payload, headers=headers)
         response.raise_for_status()
-        data = response.json()
-
-    audio_bytes = base64.b64decode(data["audio_base64"])
-    audio_path = output_dir / "audio.mp3"
-    audio_path.write_bytes(audio_bytes)
-
-    chars: list[str] = data["alignment"]["characters"]
-    starts: list[float] = data["alignment"]["character_start_times_seconds"]
-    ends: list[float] = data["alignment"]["character_end_times_seconds"]
-
-    word_starts_ms = _chars_to_word_starts(chars, starts)
-    duration_ms = int(ends[-1] * 1000) if ends else 0
-
-    return TTSResult(audio_path=audio_path, duration_ms=duration_ms, word_starts_ms=word_starts_ms)
+        return response.content
 
 
-def _chars_to_word_starts(chars: list[str], starts: list[float]) -> list[tuple[str, int]]:
-    """Bucket character timestamps into word-start tuples."""
-    words: list[tuple[str, int]] = []
-    current_word: list[str] = []
-    current_start: float | None = None
+async def _force_align(audio_bytes: bytes, text: str) -> dict:
+    """
+    Step 2: Get precise word/character timing from Forced Alignment.
 
-    for ch, start in zip(chars, starts):
-        if ch.isspace():
-            if current_word and current_start is not None:
-                words.append(("".join(current_word), int(current_start * 1000)))
-                current_word, current_start = [], None
-        else:
-            if current_start is None:
-                current_start = start
-            current_word.append(ch)
+    Endpoint: POST /v1/forced-alignment
+    Format: multipart/form-data with `file` (audio) and `text` (plain string).
+    """
+    url = "https://api.elevenlabs.io/v1/forced-alignment"
+    headers = {"xi-api-key": settings.elevenlabs_api_key}
+    files = {"file": ("audio.mp3", audio_bytes, "audio/mpeg")}
+    data = {"text": text}
 
-    if current_word and current_start is not None:
-        words.append(("".join(current_word), int(current_start * 1000)))
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        response = await client.post(url, headers=headers, files=files, data=data)
+        response.raise_for_status()
+        return response.json()
 
-    return words
+
+def _extract_word_starts(alignment: dict) -> list[tuple[str, int]]:
+    """
+    Forced Alignment returns a `words` array with start/end times in seconds.
+    We convert to (word, start_ms) tuples — same shape the scheduler expects.
+    """
+    words = alignment.get("words", [])
+    return [(w["text"], int(w["start"] * 1000)) for w in words]
+
+
+def _extract_duration_ms(alignment: dict) -> int:
+    """The end time of the last word, in ms."""
+    words = alignment.get("words", [])
+    if not words:
+        return 0
+    return int(words[-1]["end"] * 1000)
+
 ```
 
 ## Shape generation (`pipeline/shapes.py`)
@@ -493,4 +523,5 @@ def _schedule_shapes(
 - When parsing the script, if the regex doesn't find ANY elements, the LLM probably wrapped the output in markdown or added preamble. The system prompt is explicit about not doing this; if it happens, log the raw output and inspect.
 - Trellis output is a GLB even though fal docs sometimes show png content_type — that's a docs bug.
 - Always force `trigger_time_ms = 0` for the first scheduled shape so the cloud forms before the voice begins.
-- The word index advances by `len(element.text.split())` for each `<say>` block — this assumes whitespace-separated words match what ElevenLabs returned. Verify this in the Milestone 4 sync test.
+- TTS now happens in two phases: synthesis (returns raw MP3) followed by Forced Alignment (returns word/character timings). Both use the same xi-api-key header, but Forced Alignment is multipart/form-data while synthesis is JSON. Don't accidentally send the alignment text wrapped in JSON — the docs are explicit that it must be a plain form field.
+
