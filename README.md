@@ -2,8 +2,6 @@
 
 A generative cinematic explainer. Type a topic, wait a minute, watch 30,000 glowing particles morph through recognizable 3D shapes in perfect sync with a narrated explanation.
 
-<!-- Replace with your recorded hero GIF/video -->
-![Hero GIF placeholder](https://placehold.co/800x400/000000/88bbff?text=hero+gif+goes+here)
 
 ## Try it instantly
 
