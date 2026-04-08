@@ -31,6 +31,9 @@ plans/
 # Claude Code personal overrides
 .claude/settings.local.json
 
+# Proposed changes (working notes)
+PROPOSED_CHANGES.md
+
 # OS
 .DS_Store
 Thumbs.db
