@@ -120,8 +120,8 @@ void main() {
 
     vec3 morphed = mix(position, targetPos, eased);
 
-    // Curl noise turbulence — peaks mid-morph, gentle at rest (sin avoids frame-snap)
-    float noiseStrength = 0.05 + sin(u_morphProgress * 3.14159) * 0.15;
+    // Curl noise turbulence — per-particle explosion-and-settle, ramped to avoid frame-snap
+    float noiseStrength = 0.05 + (1.0 - eased) * smoothstep(0.0, 0.15, u_morphProgress) * 0.18;
     vec3 noiseOffset = curlNoise(morphed * 1.5 + u_time * 0.15) * noiseStrength;
 
     vec3 finalPos = morphed + noiseOffset;
@@ -129,7 +129,7 @@ void main() {
     vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
     gl_Position = projectionMatrix * mvPosition;
 
-    gl_PointSize = u_pointSize * (2.0 / -mvPosition.z);
+    gl_PointSize = u_pointSize * (2.0 / -mvPosition.z) * (1.0 + u_audioAmplitude * 0.3);
 
-    v_intensity = 0.55 + u_audioAmplitude * 0.45 + jitter * 0.1;
+    v_intensity = 0.55 + u_audioAmplitude * 0.25 + jitter * 0.1;
 }
