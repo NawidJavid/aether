@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ParticleCanvas } from './ParticleCanvas';
+import { Subtitles } from './Subtitles';
 import { useStore } from '../store';
 
 export function PlaybackView() {
@@ -44,6 +45,7 @@ export function PlaybackView() {
   return (
     <div className="relative w-full h-full">
       <ParticleCanvas />
+      {playing && <Subtitles />}
       {showButton && (
         <div className="absolute inset-0 flex items-center justify-center">
           <button

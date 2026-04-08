@@ -12,6 +12,7 @@ export interface ScheduledShape {
   point_count: number;
   trigger_time_ms: number;
   morph_duration_ms: number;
+  subtitle: string;
 }
 
 export interface Manifest {

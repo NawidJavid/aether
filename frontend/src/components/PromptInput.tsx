@@ -10,9 +10,8 @@ export function PromptInput() {
   const error = useStore((s) => s.error);
   const setError = useStore((s) => s.setError);
 
-  // TODO: Remove this test handler after testing is complete
   const handleTest = async () => {
-    const TEST_MANIFEST_ID = '2fc43184-b989-410b-81fc-47293a017623';
+    const TEST_MANIFEST_ID = 'f024cdab-4161-414f-a0fe-870030326303';
     try {
       const resp = await fetch(`/assets/manifests/${TEST_MANIFEST_ID}/manifest.json`);
       const manifest = await resp.json();
@@ -65,12 +64,11 @@ export function PromptInput() {
           {loading ? 'Starting...' : 'Explain'}
         </button>
       </form>
-      {/* TODO: Remove test button after testing is complete */}
       <button
         onClick={handleTest}
         className="absolute bottom-6 left-6 text-white/20 hover:text-white/50 text-xs transition-colors"
       >
-        test
+        demo
       </button>
       {error && (
         <p className="mt-4 text-red-400/80 text-sm max-w-lg text-center">{error}</p>

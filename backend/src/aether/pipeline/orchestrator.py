@@ -83,9 +83,15 @@ def _schedule_shapes(
     word_index = 0
     word_starts = tts.word_starts_ms
     scheduled: list[ScheduledShape] = []
+    pending_say: list[str] = []
 
     for element in script.elements:
         if element.kind == "shape":
+            # Attach accumulated say text to the previous shape
+            if scheduled and pending_say:
+                scheduled[-1].subtitle = " ".join(pending_say)
+                pending_say = []
+
             assert element.concept is not None
             trigger_ms = word_starts[word_index][1] if word_index < len(word_starts) else 0
             if not scheduled:
@@ -103,6 +109,11 @@ def _schedule_shapes(
             )
         elif element.kind == "say":
             assert element.text is not None
+            pending_say.append(element.text)
             word_index += len(element.text.split())
+
+    # Attach remaining say text to the last shape
+    if scheduled and pending_say:
+        scheduled[-1].subtitle = " ".join(pending_say)
 
     return scheduled

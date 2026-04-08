@@ -41,6 +41,7 @@ class ScheduledShape(BaseModel):
     point_count: int
     trigger_time_ms: int
     morph_duration_ms: int = 1500
+    subtitle: str = ""
 
 
 class Manifest(BaseModel):
