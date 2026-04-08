@@ -6,6 +6,8 @@ uniform float u_time;
 uniform float u_morphProgress;
 uniform float u_audioAmplitude;
 uniform float u_pointSize;
+uniform vec3 u_mousePos;
+uniform float u_mouseRadius;
 
 varying float v_intensity;
 
@@ -126,10 +128,21 @@ void main() {
 
     vec3 finalPos = morphed + noiseOffset;
 
+    // Mouse repulsion — 3D sphere, push particles to edge
+    vec3 toParticle = finalPos - u_mousePos;
+    float dist = length(toParticle);
+    if (dist < u_mouseRadius && dist > 0.001) {
+        vec3 pushDir = toParticle / dist;
+        float pushDist = u_mouseRadius - dist;
+        finalPos += pushDir * pushDist * 1.1;
+    }
+
     vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
     gl_Position = projectionMatrix * mvPosition;
 
     gl_PointSize = u_pointSize * (2.0 / -mvPosition.z) * (1.0 + u_audioAmplitude * 0.3);
 
-    v_intensity = 0.55 + u_audioAmplitude * 0.25 + jitter * 0.1;
+    // Brighten particles at the rim of the repulsion zone
+    float mouseGlow = (dist > u_mouseRadius && dist < u_mouseRadius * 2.0) ? (1.0 - (dist - u_mouseRadius) / u_mouseRadius) * 0.25 : 0.0;
+    v_intensity = 0.55 + u_audioAmplitude * 0.25 + jitter * 0.1 + mouseGlow;
 }

@@ -13,6 +13,8 @@ export class ParticleSystem {
   private isMorphing = false;
 
   readonly pointCount: number;
+  private mouseTarget = new THREE.Vector3(999, 999, 999);
+  private mouseCurrent = new THREE.Vector3(999, 999, 999);
 
   constructor(pointCount: number = 30000) {
     this.pointCount = pointCount;
@@ -45,6 +47,8 @@ export class ParticleSystem {
         u_audioAmplitude: { value: 0.0 },
         u_pointSize: { value: 4.5 },
         u_color: { value: new THREE.Color(0x88bbff) },
+        u_mousePos: { value: new THREE.Vector3(999, 999, 999) },
+        u_mouseRadius: { value: 0.22 },
       },
       transparent: true,
       depthWrite: false,
@@ -82,9 +86,21 @@ export class ParticleSystem {
     this.isMorphing = true;
   }
 
+  setMousePos(x: number, y: number, z: number): void {
+    this.mouseTarget.set(x, y, z);
+  }
+
+  clearMouse(): void {
+    this.mouseTarget.set(999, 999, 999);
+  }
+
   update(elapsedSeconds: number, audioAmplitude: number): void {
     this.material.uniforms.u_time.value = elapsedSeconds;
     this.material.uniforms.u_audioAmplitude.value = audioAmplitude;
+
+    // Lerp mouse position for fluid feel
+    this.mouseCurrent.lerp(this.mouseTarget, 0.25);
+    this.material.uniforms.u_mousePos.value.copy(this.mouseCurrent);
 
     if (this.isMorphing) {
       const t = (performance.now() - this.morphStartTime) / this.morphDuration;
