@@ -1,0 +1,74 @@
+{
+  "manifest_id": "f024cdab-4161-414f-a0fe-870030326303",
+  "topic": "How does the human body work?",
+  "audio_url": "/assets/demo/audio.mp3",
+  "audio_duration_ms": 100239,
+  "shapes": [
+    {
+      "concept": "human skeleton",
+      "point_cloud_url": "/assets/demo/shapes/af25865eab1f0896.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 0,
+      "morph_duration_ms": 1500,
+      "subtitle": "Your body is a living machine made of roughly thirty-seven trillion cells, each one performing a specialized job so the whole system runs without you ever having to think about it."
+    },
+    {
+      "concept": "anatomical human heart",
+      "point_cloud_url": "/assets/demo/shapes/36572218b63f3537.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 10159,
+      "morph_duration_ms": 1500,
+      "subtitle": "At the center of it all is your heart, a fist-sized pump that beats about a hundred thousand times a day, pushing blood through sixty thousand miles of vessels to deliver oxygen and nutrients to every corner of your body."
+    },
+    {
+      "concept": "pair of human lungs",
+      "point_cloud_url": "/assets/demo/shapes/0847f3fa1b6cc760.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 22939,
+      "morph_duration_ms": 1500,
+      "subtitle": "That oxygen comes from your lungs. Each breath pulls air into hundreds of millions of tiny sacs where oxygen slips into your bloodstream and carbon dioxide is expelled back out."
+    },
+    {
+      "concept": "human stomach",
+      "point_cloud_url": "/assets/demo/shapes/e3439663f008af9e.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 35000,
+      "morph_duration_ms": 1500,
+      "subtitle": "Meanwhile, your digestive system is breaking down everything you eat. Your stomach churns food with powerful acid, and your intestines absorb the molecules your cells need for energy and repair."
+    },
+    {
+      "concept": "human brain",
+      "point_cloud_url": "/assets/demo/shapes/66dd212d1a187009.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 47379,
+      "morph_duration_ms": 1500,
+      "subtitle": "Overseeing all of this is the brain, an organ of eighty-six billion neurons that coordinates movement, processes sensation, stores memory, and generates every thought you have ever had."
+    },
+    {
+      "concept": "human spine",
+      "point_cloud_url": "/assets/demo/shapes/4ab9fdf04317fa76.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 59479,
+      "morph_duration_ms": 1500,
+      "subtitle": "Your nervous system branches out from the brain and spinal cord like a complex wiring harness, carrying electrical signals at speeds up to two hundred seventy miles per hour to keep your muscles, organs, and reflexes in constant communication."
+    },
+    {
+      "concept": "shield with cross emblem",
+      "point_cloud_url": "/assets/demo/shapes/8897661b6209aa4a.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 73799,
+      "morph_duration_ms": 1500,
+      "subtitle": "And protecting it all is your immune system, an army of specialized cells that patrol your blood, hunting bacteria, viruses, and rogue cells before they can do harm."
+    },
+    {
+      "concept": "DNA double helix",
+      "point_cloud_url": "/assets/demo/shapes/61e46ba2740e2e65.bin",
+      "point_count": 30000,
+      "trigger_time_ms": 84540,
+      "morph_duration_ms": 1500,
+      "subtitle": "Deep inside nearly every cell sits your DNA, a twisted ladder of three billion chemical letters that holds the blueprint for building and maintaining everything you are. The human body is not one machine. It is trillions of tiny machines working in extraordinary harmony."
+    }
+  ],
+  "full_text": "Your body is a living machine made of roughly thirty-seven trillion cells, each one performing a specialized job so the whole system runs without you ever having to think about it. At the center of it all is your heart, a fist-sized pump that beats about a hundred thousand times a day, pushing blood through sixty thousand miles of vessels to deliver oxygen and nutrients to every corner of your body. That oxygen comes from your lungs. Each breath pulls air into hundreds of millions of tiny sacs where oxygen slips into your bloodstream and carbon dioxide is expelled back out. Meanwhile, your digestive system is breaking down everything you eat. Your stomach churns food with powerful acid, and your intestines absorb the molecules your cells need for energy and repair. Overseeing all of this is the brain, an organ of eighty-six billion neurons that coordinates movement, processes sensation, stores memory, and generates every thought you have ever had. Your nervous system branches out from the brain and spinal cord like a complex wiring harness, carrying electrical signals at speeds up to two hundred seventy miles per hour to keep your muscles, organs, and reflexes in constant communication. And protecting it all is your immune system, an army of specialized cells that patrol your blood, hunting bacteria, viruses, and rogue cells before they can do harm. Deep inside nearly every cell sits your DNA, a twisted ladder of three billion chemical letters that holds the blueprint for building and maintaining everything you are. The human body is not one machine. It is trillions of tiny machines working in extraordinary harmony.",
+  "created_at": "2026-04-08T11:51:00.076559Z"
+}

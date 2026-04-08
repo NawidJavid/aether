@@ -63,9 +63,8 @@ export function PromptInput() {
   }, [placeholderIdx, topic]);
 
   const handleTest = async () => {
-    const TEST_MANIFEST_ID = 'f024cdab-4161-414f-a0fe-870030326303';
     try {
-      const resp = await fetch(`/assets/manifests/${TEST_MANIFEST_ID}/manifest.json`);
+      const resp = await fetch('/assets/demo/manifest.json');
       const manifest = await resp.json();
       useStore.getState().setManifest(manifest);
       const audio = new Audio(manifest.audio_url);

@@ -5,14 +5,23 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/
+*.egg-info/
 
 # Node
 node_modules/
 dist/
 .vite/
 
-# Aether runtime
-backend/data/
+# Aether runtime (generated data)
+backend/data/*
+!backend/data/demo/
+
+# Build artifacts and debug logs
+backend/server_debug*.log
+backend/test_tts_output/
+
+# Plans (Claude Code working files)
+plans/
 
 # Env
 .env
