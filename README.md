@@ -2,6 +2,7 @@
 
 A generative cinematic explainer. Type a topic, wait a minute, watch 30,000 glowing particles morph through recognizable 3D shapes in perfect sync with a narrated explanation.
 
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4f479c1a-9812-4578-8409-6a61faf92a37" />
 
 ## Try it instantly
 
