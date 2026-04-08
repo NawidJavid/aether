@@ -10,6 +10,22 @@ export function PromptInput() {
   const error = useStore((s) => s.error);
   const setError = useStore((s) => s.setError);
 
+  // TODO: Remove this test handler after testing is complete
+  const handleTest = async () => {
+    const TEST_MANIFEST_ID = '2fc43184-b989-410b-81fc-47293a017623';
+    try {
+      const resp = await fetch(`/assets/manifests/${TEST_MANIFEST_ID}/manifest.json`);
+      const manifest = await resp.json();
+      useStore.getState().setManifest(manifest);
+      const audio = new Audio(manifest.audio_url);
+      audio.preload = 'auto';
+      useStore.getState().setAudioElement(audio);
+      setView('playback');
+    } catch (err) {
+      setError(String(err));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!topic.trim() || loading) return;
@@ -49,6 +65,13 @@ export function PromptInput() {
           {loading ? 'Starting...' : 'Explain'}
         </button>
       </form>
+      {/* TODO: Remove test button after testing is complete */}
+      <button
+        onClick={handleTest}
+        className="absolute bottom-6 left-6 text-white/20 hover:text-white/50 text-xs transition-colors"
+      >
+        test
+      </button>
       {error && (
         <p className="mt-4 text-red-400/80 text-sm max-w-lg text-center">{error}</p>
       )}

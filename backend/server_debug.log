@@ -1,0 +1,14 @@
+[CONFIG DEBUG] env_path=C:\Users\Nawid\Desktop\aether\backend\.env
+[CONFIG DEBUG] env_file_exists=True
+[CONFIG DEBUG] load_dotenv returned=True
+[CONFIG DEBUG] os.environ ELEVENLABS_API_KEY set=True
+[CONFIG DEBUG] os.environ ELEVENLABS_VOICE_ID=TX3LPaxmHKxFdv7VOQHJ
+[CONFIG DEBUG] cwd=C:\Users\Nawid\desktop\aether\backend
+[CONFIG DEBUG] settings.elevenlabs_api_key set=True
+[CONFIG DEBUG] settings.elevenlabs_voice_id=TX3LPaxmHKxFdv7VOQHJ
+INFO:     Started server process [11128]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8003 (Press CTRL+C to quit)
+[TTS DEBUG] voice_id=TX3LPaxmHKxFdv7VOQHJ
+[TTS DEBUG] api_key set=True, len=51, starts=sk_a43c6

@@ -124,11 +124,7 @@ void main() {
     float noiseStrength = 0.05 + sin(u_morphProgress * 3.14159) * 0.15;
     vec3 noiseOffset = curlNoise(morphed * 1.5 + u_time * 0.15) * noiseStrength;
 
-    // Audio-reactive radial pulse
-    vec3 dir = length(morphed) > 0.001 ? normalize(morphed) : vec3(0.0);
-    float pulse = u_audioAmplitude * 0.12;
-
-    vec3 finalPos = morphed + noiseOffset + dir * pulse;
+    vec3 finalPos = morphed + noiseOffset;
 
     vec4 mvPosition = modelViewMatrix * vec4(finalPos, 1.0);
     gl_Position = projectionMatrix * mvPosition;

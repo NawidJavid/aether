@@ -41,7 +41,7 @@ export function ParticleCanvas() {
 
       scheduler = new PlaybackScheduler(particles, manifest);
       scheduler.preload('').then(() => {
-        useStore.setState({ ready: true });
+        useStore.setState({ ready: true, scheduler });
       });
     }
 

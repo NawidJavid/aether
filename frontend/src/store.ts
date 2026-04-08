@@ -9,6 +9,7 @@ interface AetherStore {
   manifest: Manifest | null;
   audioElement: HTMLAudioElement | null;
   ready: boolean;
+  scheduler: { reset: () => void } | null;
   progressMessage: string;
   error: string | null;
 
@@ -17,6 +18,7 @@ interface AetherStore {
   setManifest: (m: Manifest | null) => void;
   setAudioElement: (el: HTMLAudioElement | null) => void;
   setReady: (r: boolean) => void;
+  setScheduler: (s: { reset: () => void } | null) => void;
   setProgressMessage: (m: string) => void;
   setError: (e: string | null) => void;
   reset: () => void;
@@ -28,6 +30,7 @@ export const useStore = create<AetherStore>((set) => ({
   manifest: null,
   audioElement: null,
   ready: false,
+  scheduler: null,
   progressMessage: '',
   error: null,
 
@@ -36,6 +39,7 @@ export const useStore = create<AetherStore>((set) => ({
   setManifest: (m) => set({ manifest: m }),
   setAudioElement: (el) => set({ audioElement: el }),
   setReady: (r) => set({ ready: r }),
+  setScheduler: (s) => set({ scheduler: s }),
   setProgressMessage: (m) => set({ progressMessage: m }),
   setError: (e) => set({ error: e }),
 
@@ -45,6 +49,7 @@ export const useStore = create<AetherStore>((set) => ({
     manifest: null,
     audioElement: null,
     ready: false,
+    scheduler: null,
     progressMessage: '',
     error: null,
   }),
